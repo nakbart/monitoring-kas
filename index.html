@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tabungan Negara Kesatuan Republik Struggle Friends</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #050811;
+            color: #f1f5f9;
+            overflow-x: hidden;
+        }
+
+        /* Animated Grid Pattern Background */
+        @keyframes move-grid {
+            0% {
+                background-position: 0 0;
+            }
+
+            100% {
+                background-position: 40px 40px;
+            }
+        }
+
+        .bg-grid-animated {
+            background-size: 40px 40px;
+            background-image:
+                linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            animation: move-grid 4s linear infinite;
+        }
+
+        /* Floating Light Orbs Animation */
+        @keyframes float-slow {
+
+            0%,
+            100% {
+                transform: translate(0px, 0px) scale(1);
+            }
+
+            50% {
+                transform: translate(40px, -30px) scale(1.15);
+            }
+        }
+
+        @keyframes float-reverse {
+
+            0%,
+            100% {
+                transform: translate(0px, 0px) scale(1);
+            }
+
+            50% {
+                transform: translate(-40px, 30px) scale(1.1);
+            }
+        }
+
+        .animate-orb-1 {
+            animation: float-slow 10s ease-in-out infinite;
+        }
+
+        .animate-orb-2 {
+            animation: float-reverse 13s ease-in-out infinite;
+        }
+
+        /* Interactive Mouse Spotlight */
+        #spotlight {
+            pointer-events: none;
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(16, 185, 129, 0.07), transparent 80%);
+        }
+
+        /* Glass Cards */
+        .glass-card {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            position: relative;
+            z-index: 2;
+        }
+
+        .glass-card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-card-hover:hover {
+            border-color: rgba(16, 185, 129, 0.4);
+            box-shadow: 0 10px 30px -10px rgba(16, 185, 129, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0b1120;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #334155;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen pb-12 selection:bg-emerald-500 selection:text-white relative bg-grid-animated">
+
+    <!-- Interactive Mouse Spotlight -->
+    <div id="spotlight"></div>
+
+    <!-- Animated Ambient Light Orbs -->
+    <div
+        class="fixed top-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full bg-emerald-600/15 blur-[120px] pointer-events-none animate-orb-1">
+    </div>
+    <div
+        class="fixed bottom-[-10%] right-[-10%] w-[600px] h-[600px] rounded-full bg-teal-600/15 blur-[140px] pointer-events-none animate-orb-2">
+    </div>
+
+    <!-- Navbar Minimalis dengan Logo sf.png -->
+    <header class="border-b border-slate-800/80 bg-[#080d1a]/90 sticky top-0 z-30 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-4">
+            <!-- Brand & Logo sf.png -->
+            <div class="flex items-center gap-3">
+                <img src="sf.png" alt="Logo SF"
+                    onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=SF&background=10b981&color=050811&font-size=0.5&bold=true';"
+                    class="w-9 h-9 rounded-xl object-cover border border-emerald-500/30 shadow-md shadow-emerald-500/10">
+                <h1 class="text-base sm:text-lg font-extrabold text-white tracking-tight">
+                    Struggle Friends <span class="hidden sm:inline font-normal text-slate-400 text-sm">| Monitoring
+                        Kas</span>
+                </h1>
+            </div>
+
+            <!-- Auth Buttons -->
+            <div id="authStatusArea" class="flex items-center gap-3">
+                <button onclick="openLoginModal()" id="btnLogin"
+                    class="flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs sm:text-sm font-semibold border border-slate-700 transition">
+                    <i data-lucide="lock" class="w-3.5 h-3.5 text-emerald-400"></i>
+                    Login Admin
+                </button>
+                <div id="adminBadge" class="hidden flex items-center gap-2">
+                    <span
+                        class="px-3 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-semibold flex items-center gap-1.5">
+                        <i data-lucide="shield-check" class="w-3.5 h-3.5"></i> Admin Active
+                    </span>
+                    <button onclick="logoutAdmin()"
+                        class="px-2.5 py-1 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 text-xs font-medium transition">
+                        Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Header Banner / Keterangan (Di Bawah Navbar) -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-2">
+        <div
+            class="glass-card p-4 sm:p-5 rounded-2xl border-emerald-500/20 bg-emerald-950/10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div>
+                <div
+                    class="flex items-center gap-2 text-emerald-400 text-xs font-semibold tracking-wider uppercase mb-1">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    Sistem Monitoring Transparan & Real-Time
+                </div>
+                <h2 class="text-lg sm:text-xl font-bold text-white">
+                    Tabungan Negara Kesatuan Republik Struggle Friends
+                </h2>
+                <p class="text-xs sm:text-sm text-slate-400 mt-0.5">
+                    Pencatatan Iuran Mingguan Menuju Liburan Bersama • Target Rp10.000 / Minggu
+                </p>
+            </div>
+            <div
+                class="flex items-center gap-2 bg-slate-900/80 px-3 py-1.5 rounded-xl border border-slate-800 text-xs text-slate-300 w-fit">
+                <i data-lucide="calendar" class="w-4 h-4 text-emerald-400"></i>
+                <span>Target: 8 Pekan</span>
+            </div>
+        </div>
+    </section>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 space-y-6 relative z-10">
+
+        <!-- 4 Summary Cards Top -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <!-- Total Terkumpul -->
+            <div class="glass-card glass-card-hover p-5 rounded-2xl relative overflow-hidden">
+                <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Total Terkumpul</div>
+                <div class="text-2xl sm:text-3xl font-extrabold text-emerald-400 tracking-tight"
+                    id="statTotalCollected">Rp0</div>
+                <div class="mt-3">
+                    <div class="flex justify-between text-xs text-slate-400 mb-1">
+                        <span>Tercapai</span>
+                        <span id="statPercentText" class="text-emerald-400 font-semibold">0%</span>
+                    </div>
+                    <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                        <div id="statProgressBar"
+                            class="bg-gradient-to-r from-emerald-500 to-teal-400 h-full rounded-full transition-all duration-500"
+                            style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Target Liburan -->
+            <div class="glass-card glass-card-hover p-5 rounded-2xl">
+                <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Target Liburan</div>
+                <div class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight" id="statTargetAmount">Rp0
+                </div>
+                <p class="text-xs text-slate-400 mt-2" id="statTargetDetail">0 Warga Wajib × 8 Minggu</p>
+            </div>
+
+            <!-- Sisa Target -->
+            <div class="glass-card glass-card-hover p-5 rounded-2xl">
+                <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Sisa Target</div>
+                <div class="text-2xl sm:text-3xl font-extrabold text-amber-400 tracking-tight" id="statRemaining">Rp0
+                </div>
+                <p class="text-xs text-slate-400 mt-2">Kekurangan dana kas liburan</p>
+            </div>
+
+            <!-- Warga Wajib Setor -->
+            <div class="glass-card glass-card-hover p-5 rounded-2xl">
+                <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Warga Wajib Setor</div>
+                <div class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight" id="statWargaCount">0 <span
+                        class="text-sm font-normal text-slate-400">Warga</span></div>
+                <p class="text-xs text-emerald-400/90 mt-2 flex items-center gap-1" id="statExemptDetail">
+                    <i data-lucide="info" class="w-3.5 h-3.5 inline"></i> 2 Bebas Iuran (Duta Besar)
+                </p>
+            </div>
+        </div>
+
+        <!-- Panel Admin Tambah Transaksi -->
+        <div id="adminPanel" class="hidden glass-card p-6 rounded-2xl border-amber-500/30 bg-amber-500/5">
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center gap-2 text-amber-400 font-bold text-base">
+                    <i data-lucide="sliders" class="w-5 h-5"></i>
+                    Panel Kontrol Admin
+                </div>
+                <button onclick="resetDataToDefault()"
+                    class="text-xs text-red-400 hover:text-red-300 underline flex items-center gap-1">
+                    <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Reset Ke Data Awal
+                </button>
+            </div>
+
+            <form id="formTransaction" onsubmit="handleTransactionSubmit(event)" class="space-y-4">
+                <div class="text-xs font-semibold text-slate-300 uppercase tracking-wider">Catat Transaksi Baru</div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">Nama Warga</label>
+                        <select id="txWargaId" onchange="updateWeekDropdownOptions()" required
+                            class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+                            <!-- Populated by JS -->
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">Minggu Ke-</label>
+                        <select id="txWeek" required
+                            class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+                            <!-- Populated dynamically by JS -->
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">Nominal (Rp)</label>
+                        <input type="number" id="txAmount" value="10000" min="10000" step="10000" required
+                            class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">Metode Bayar</label>
+                        <select id="txMethod" required
+                            class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+                            <option value="QRIS Bank">QRIS Bank</option>
+                            <option value="QRIS E-Wallet">QRIS E-Wallet</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">Tanggal</label>
+                        <input type="date" id="txDate" required
+                            class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+                    </div>
+                </div>
+                <div class="flex items-center gap-3 pt-2">
+                    <input type="text" id="txNote" placeholder="Catatan/Keterangan tambahan (opsional)"
+                        class="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+                    <button type="submit" id="btnSubmitTx"
+                        class="px-5 py-2 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold text-sm rounded-lg transition flex items-center gap-2 whitespace-nowrap shadow-lg shadow-emerald-500/20">
+                        <i data-lucide="plus-circle" class="w-4 h-4"></i> Simpan Transaksi
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Matriks Pembayaran Mingguan (M1 - M8) -->
+        <div class="glass-card rounded-2xl p-5 sm:p-6">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+                <div>
+                    <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                        <i data-lucide="grid" class="w-5 h-5 text-emerald-400"></i>
+                        Matriks Pembayaran Mingguan (M1 - M8)
+                    </h2>
+                    <p class="text-xs text-slate-400 mt-0.5" id="matrixSubtitle">
+                        Mode Viewer: Tampilan Publik. Status pembayaran diperjelas dengan penanda hijau secara
+                        real-time.
+                    </p>
+                </div>
+                <!-- Search Filter -->
+                <div class="relative w-full sm:w-64">
+                    <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                    <input type="text" id="searchMatrix" oninput="renderMatrixTable()"
+                        placeholder="Cari nama atau jabatan..."
+                        class="w-full bg-slate-900/80 border border-slate-700/80 rounded-xl pl-9 pr-4 py-2 text-sm text-white focus:outline-none focus:border-emerald-500 transition">
+                </div>
+            </div>
+
+            <div class="overflow-x-auto rounded-xl border border-slate-800">
+                <table class="w-full text-left text-xs sm:text-sm">
+                    <thead
+                        class="bg-slate-900/90 text-slate-400 font-semibold border-b border-slate-800 uppercase tracking-wider">
+                        <tr>
+                            <th class="py-3 px-3 text-center w-10">No</th>
+                            <th class="py-3 px-4 min-w-[160px]">Nama Warga</th>
+                            <th class="py-3 px-4 min-w-[160px]">Peran Kabinet</th>
+                            <th class="py-3 px-2 text-center w-10">M1</th>
+                            <th class="py-3 px-2 text-center w-10">M2</th>
+                            <th class="py-3 px-2 text-center w-10">M3</th>
+                            <th class="py-3 px-2 text-center w-10">M4</th>
+                            <th class="py-3 px-2 text-center w-10">M5</th>
+                            <th class="py-3 px-2 text-center w-10">M6</th>
+                            <th class="py-3 px-2 text-center w-10">M7</th>
+                            <th class="py-3 px-2 text-center w-10">M8</th>
+                            <th class="py-3 px-4 text-right">Terkumpul</th>
+                            <th class="py-3 px-4 text-center">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="matrixTableBody" class="divide-y divide-slate-800/60 font-medium text-slate-200">
+                        <!-- Populated by JS -->
+                    </tbody>
+                    <tfoot class="bg-slate-900/60 font-bold text-white border-t border-slate-800">
+                        <tr>
+                            <td colspan="3" class="py-3 px-4 text-emerald-400 uppercase text-xs tracking-wider">Total
+                                Terkumpul Per Minggu</td>
+                            <td id="totM1" class="py-3 px-1 text-center text-xs">Rp0</td>
+                            <td id="totM2" class="py-3 px-1 text-center text-xs">Rp0</td>
+                            <td id="totM3" class="py-3 px-1 text-center text-xs">Rp0</td>
+                            <td id="totM4" class="py-3 px-1 text-center text-xs">Rp0</td>
+                            <td id="totM5" class="py-3 px-1 text-center text-xs">Rp0</td>
+                            <td id="totM6" class="py-3 px-1 text-center text-xs">Rp0</td>
+                            <td id="totM7" class="py-3 px-1 text-center text-xs">Rp0</td>
+                            <td id="totM8" class="py-3 px-1 text-center text-xs">Rp0</td>
+                            <td id="totAll" class="py-3 px-4 text-right text-emerald-400">Rp0</td>
+                            <td id="lunasCount" class="py-3 px-4 text-center text-xs text-slate-400">0 Lunas</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+
+        <!-- Log Transaksi Masuk dengan Filter Per-Week & Paginasi Max 11 -->
+        <div class="glass-card rounded-2xl p-5 sm:p-6">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+                <div>
+                    <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                        <i data-lucide="list-checks" class="w-5 h-5 text-emerald-400"></i>
+                        Log Transaksi Masuk
+                    </h2>
+                    <p class="text-xs text-slate-400 mt-0.5">Catatan riwayat pembayaran kas warga yang terverifikasi.
+                    </p>
+                </div>
+
+                <!-- Filter Tombol Per Minggu (All, M1..M8) -->
+                <div class="flex flex-wrap items-center gap-1.5 bg-slate-900/80 p-1.5 rounded-xl border border-slate-800"
+                    id="weekFilterButtons">
+                    <!-- Dynamic Filter Buttons Populated by JS -->
+                </div>
+            </div>
+
+            <div class="overflow-x-auto rounded-xl border border-slate-800">
+                <table class="w-full text-left text-xs sm:text-sm">
+                    <thead
+                        class="bg-slate-900/90 text-slate-400 font-semibold border-b border-slate-800 uppercase tracking-wider">
+                        <tr>
+                            <th class="py-3 px-3 text-center w-10">No</th>
+                            <th class="py-3 px-4">Tanggal</th>
+                            <th class="py-3 px-4">Minggu Ke-</th>
+                            <th class="py-3 px-4">Nama Warga</th>
+                            <th class="py-3 px-4 text-right">Nominal</th>
+                            <th class="py-3 px-4 text-center">Metode Bayar</th>
+                            <th class="py-3 px-4 text-center">Bukti Bayar</th>
+                            <th class="py-3 px-4">Keterangan</th>
+                            <th id="thActionLog" class="py-3 px-3 text-center hidden">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="logsTableBody" class="divide-y divide-slate-800/60 text-slate-200">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination Bar (Maksimal 11 Data per Tabel) -->
+            <div
+                class="flex flex-col sm:flex-row items-center justify-between gap-3 mt-4 pt-3 border-t border-slate-800/60 text-xs text-slate-400">
+                <div id="logPageInfo">Menampilkan 0 data</div>
+                <div class="flex items-center gap-2" id="logPaginationBtns">
+                    <!-- Pagination Controls JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- QRIS & WhatsApp + Catatan Liburan -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <!-- Box QRIS (7 col) -->
+            <div class="lg:col-span-7 glass-card rounded-2xl p-6 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center gap-2 text-emerald-400 font-bold text-base mb-1">
+                        <i data-lucide="qr-code" class="w-5 h-5"></i>
+                        Pembayaran QRIS & Konfirmasi WhatsApp
+                    </div>
+                    <p class="text-xs text-slate-400 mb-6">
+                        Scan QRIS berikut untuk bayar kas, lalu klik tombol <strong class="text-slate-200">Konfirmasi
+                            WhatsApp</strong> di bawah untuk mengirim bukti transfer ke Menteri Keuangan.
+                    </p>
+
+                    <div
+                        class="flex flex-col sm:flex-row items-center gap-6 bg-slate-900/70 border border-slate-800 p-5 rounded-2xl">
+                        <!-- Container Foto qris.jpeg -->
+                        <div class="relative group cursor-pointer" onclick="openQrisModal()">
+                            <div
+                                class="bg-white p-2 rounded-xl shadow-xl transition-transform duration-300 group-hover:scale-105 flex items-center justify-center">
+                                <img src="qris.jpeg" alt="QRIS Struggle Friends" id="qrisMainImg"
+                                    onerror="handleQrisImageError(this)"
+                                    class="w-40 h-40 sm:w-44 sm:h-44 object-contain rounded-lg">
+                            </div>
+                            <!-- Hover Overlay Icon -->
+                            <div
+                                class="absolute inset-0 bg-slate-900/60 rounded-xl opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center text-white text-xs font-semibold transition-opacity">
+                                <i data-lucide="zoom-in" class="w-6 h-6 mb-1"></i>
+                                Perbesar QRIS
+                            </div>
+                        </div>
+
+                        <div class="flex-1 space-y-3 text-center sm:text-left">
+                            <div>
+                                <span
+                                    class="text-[10px] font-bold tracking-widest text-emerald-400 uppercase bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded">QR
+                                    Code Standar Pembayaran Nasional (QRIS)</span>
+                                <h3 class="text-xl font-extrabold text-white mt-1">Struggle Friends</h3>
+                                <p class="text-xs text-slate-400 font-mono">NMID: ID1026527022911 A01</p>
+                            </div>
+
+                            <div
+                                class="flex flex-wrap gap-2 justify-center sm:justify-start text-[11px] font-medium text-slate-300">
+                                <span
+                                    class="bg-slate-800 border border-slate-700 px-2.5 py-1 rounded-md flex items-center gap-1">
+                                    <i data-lucide="building-2" class="w-3.5 h-3.5 text-emerald-400"></i> QRIS Bank
+                                    (m-BCA, Livin', BRImo, dll)
+                                </span>
+                                <span
+                                    class="bg-slate-800 border border-slate-700 px-2.5 py-1 rounded-md flex items-center gap-1">
+                                    <i data-lucide="wallet" class="w-3.5 h-3.5 text-emerald-400"></i> QRIS E-Wallet
+                                    (Gopay, OVO, ShopeePay, DANA)
+                                </span>
+                            </div>
+
+                            <a href="https://wa.me/628999499753?text=Halo%20Menteri%20Keuangan,%20saya%20sudah%20bayar%20kas%20Struggle%20Friends"
+                                target="_blank"
+                                class="inline-flex items-center justify-center gap-2 w-full sm:w-auto px-5 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold text-sm rounded-xl transition shadow-lg shadow-emerald-500/20">
+                                <i data-lucide="message-square" class="w-4 h-4"></i>
+                                Konfirmasi Pembayaran via WhatsApp
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Box Catatan Liburan (5 col) -->
+            <div class="lg:col-span-5 glass-card rounded-2xl p-6 flex flex-col justify-between">
+                <div>
+                    <h2 class="text-base font-bold text-white flex items-center gap-2 mb-4">
+                        <i data-lucide="compass" class="w-5 h-5 text-emerald-400"></i>
+                        Informasi & Catatan Liburan
+                    </h2>
+
+                    <div class="space-y-3">
+                        <div class="bg-slate-900/60 border border-slate-800 p-3.5 rounded-xl">
+                            <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Destinasi
+                                Pilihan</div>
+                            <ul class="text-xs space-y-1.5 text-slate-300">
+                                <li class="flex justify-between items-center">
+                                    <span>1. Sewa Villa</span>
+                                    <span
+                                        class="text-emerald-400 font-semibold bg-emerald-500/10 px-2 py-0.5 rounded text-[10px]">Prioritas
+                                        Utama (Voting)</span>
+                                </li>
+                                <li class="flex justify-between items-center">
+                                    <span>2. Dufan Ancol</span>
+                                    <span class="text-slate-400 text-[10px]">Opsi Alternatif 1</span>
+                                </li>
+                                <li class="flex justify-between items-center">
+                                    <span>3. Kepulauan Seribu</span>
+                                    <span class="text-slate-400 text-[10px]">Opsi Alternatif 2</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div
+                            class="bg-slate-900/60 border border-slate-800 p-3.5 rounded-xl space-y-1.5 text-xs text-slate-300">
+                            <div class="font-semibold text-amber-400 mb-1 flex items-center gap-1.5">
+                                <i data-lucide="shield-alert" class="w-4 h-4"></i> Ketentuan Khusus Warga Struggle
+                                Friends
+                            </div>
+                            <p class="leading-relaxed text-slate-400">• Duta Besar Malaysia & Turki dibebaskan dari
+                                iuran kas.</p>
+                            <p class="leading-relaxed text-slate-400">• Target pengumpulan kas: 8 Pekan berturut-turut
+                                (Rp10.000 / minggu).</p>
+                            <p class="leading-relaxed text-slate-400">• Pembayaran kas disetorkan melalui QRIS Bank /
+                                E-Wallet dan wajib konfirmasi bukti transfer.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4 pt-3 border-t border-slate-800 text-[11px] text-slate-400 text-center">
+                    Tabungan Negara Kesatuan Republik Struggle Friends &copy; 2026
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Modal Login Admin -->
+    <div id="modalLogin"
+        class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-md w-full p-6 shadow-2xl relative">
+            <button onclick="closeLoginModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            <div class="text-center mb-6">
+                <div
+                    class="w-12 h-12 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <i data-lucide="key-round" class="w-6 h-6"></i>
+                </div>
+                <h3 class="text-lg font-bold text-white">Login Admin Kas</h3>
+                <p class="text-xs text-slate-400 mt-1">Masukkan PIN / Kata Sandi untuk mengedit data</p>
+            </div>
+
+            <form onsubmit="handleLoginSubmit(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">PIN / Password Admin</label>
+                    <input type="password" id="adminPassword" required placeholder="Masukkan kata sandi..."
+                        class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500">
+                </div>
+                <button type="submit"
+                    class="w-full py-2.5 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold text-sm rounded-xl transition shadow-lg shadow-emerald-500/20">
+                    Masuk Mode Admin
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Zoom QRIS -->
+    <div id="modalQris"
+        class="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-50 hidden flex flex-col items-center justify-center p-4"
+        onclick="closeQrisModal()">
+        <div class="relative bg-white p-6 rounded-3xl shadow-2xl max-w-sm sm:max-w-md w-full text-center"
+            onclick="event.stopPropagation()">
+            <button onclick="closeQrisModal()"
+                class="absolute top-3 right-3 p-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-full transition">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+
+            <div class="text-slate-900 font-extrabold text-lg mb-1">QRIS STRUGGLE FRIENDS</div>
+            <p class="text-xs text-slate-500 mb-4 font-mono">NMID: ID1026527022911 A01</p>
+
+            <div class="flex justify-center overflow-hidden p-2">
+                <div id="zoomTarget"
+                    class="transition-transform duration-200 transform scale-100 flex items-center justify-center">
+                    <img src="qris.jpeg" alt="QRIS Struggle Friends" id="qrisModalImg"
+                        onerror="handleQrisImageError(this)"
+                        class="w-64 h-64 sm:w-72 sm:h-72 object-contain rounded-xl">
+                </div>
+            </div>
+
+            <!-- Zoom Controls -->
+            <div class="flex items-center justify-center gap-3 mt-4 pt-3 border-t border-slate-100">
+                <button onclick="changeZoom(-0.2)"
+                    class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-lg flex items-center gap-1">
+                    <i data-lucide="zoom-out" class="w-3.5 h-3.5"></i> Kecilkan
+                </button>
+                <button onclick="resetZoom()"
+                    class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-lg">
+                    Reset
+                </button>
+                <button onclick="changeZoom(0.2)"
+                    class="px-3 py-1.5 bg-emerald-500 hover:bg-emerald-600 text-slate-950 text-xs font-bold rounded-lg flex items-center gap-1">
+                    <i data-lucide="zoom-in" class="w-3.5 h-3.5"></i> Perbesar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Application Script Logic -->
+    <script>
+        // Mouse Tracking untuk efek sorot cahaya di background
+        window.addEventListener('mousemove', (e) => {
+            const spotlight = document.getElementById('spotlight');
+            if (spotlight) {
+                spotlight.style.setProperty('--mouse-x', `${e.clientX}px`);
+                spotlight.style.setProperty('--mouse-y', `${e.clientY}px`);
+            }
+        });
+
+        // Fallback jika file qris.jpeg tidak ada di folder
+        const SVG_QRIS_FALLBACK = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><rect width="200" height="200" fill="white"/><path d="M 10 10 H 70 V 70 H 10 Z" fill="none" stroke="%23000" stroke-width="6"/><rect x="25" y="25" width="30" height="30" fill="%23000"/><path d="M 130 10 H 190 V 70 H 130 Z" fill="none" stroke="%23000" stroke-width="6"/><rect x="145" y="25" width="30" height="30" fill="%23000"/><path d="M 10 130 H 70 V 190 H 10 Z" fill="none" stroke="%23000" stroke-width="6"/><rect x="25" y="145" width="30" height="30" fill="%23000"/><rect x="85" y="15" width="12" height="40" fill="%23000"/><rect x="105" y="25" width="15" height="15" fill="%23000"/><rect x="15" y="85" width="40" height="12" fill="%23000"/><rect x="70" y="70" width="60" height="60" fill="%23000"/><rect x="85" y="85" width="30" height="30" fill="%23fff"/><rect x="95" y="95" width="10" height="10" fill="%23000"/><rect x="145" y="85" width="40" height="12" fill="%23000"/><rect x="145" y="110" width="12" height="35" fill="%23000"/><rect x="85" y="145" width="35" height="12" fill="%23000"/><rect x="105" y="165" width="25" height="25" fill="%23000"/><rect x="145" y="155" width="35" height="35" fill="%23000"/><rect x="50" y="8" width="100" height="14" fill="%23ed1c24" rx="2"/><text x="100" y="18" font-size="8" font-weight="bold" fill="white" text-anchor="middle" font-family="sans-serif">QRIS GPN</text><text x="100" y="193" font-size="7" font-weight="bold" fill="%23333" text-anchor="middle" font-family="sans-serif">STRUGGLE FRIENDS</text></svg>';
+
+        function handleQrisImageError(imgElement) {
+            imgElement.onerror = null;
+            imgElement.src = SVG_QRIS_FALLBACK;
+        }
+
+        // Data Default Warga (11 Orang)
+        const DEFAULT_WARGA = [
+            { id: 1, name: "Faqih Ragi", role: "Presiden & Menteri Dalam Negeri", isExempt: false, payments: [true, false, false, false, false, false, false, false] },
+            { id: 2, name: "Nashrullah Akbar Thofiqurrohman", role: "Menteri Teknologi dan Keuangan", isExempt: false, payments: [true, true, false, false, false, false, false, false] },
+            { id: 3, name: "M. Mulki Mahendra Kusumah", role: "Menteri Kesehatan", isExempt: false, payments: [true, false, false, false, false, false, false, false] },
+            { id: 4, name: "Andre Zacky Geraldy", role: "Menteri Komunikasi dan Digital", isExempt: false, payments: [true, false, false, false, false, false, false, false] },
+            { id: 5, name: "Arif Gumilar", role: "Menteri Perhubungan", isExempt: false, payments: [false, false, false, false, false, false, false, false] },
+            { id: 6, name: "Farchan Fajhari Putra", role: "Menteri Luar Negeri", isExempt: false, payments: [true, false, false, false, false, false, false, false] },
+            { id: 7, name: "Raihan Iman Nugroho", role: "Dewan Pertimbangan Presiden", isExempt: false, payments: [true, false, false, false, false, false, false, false] },
+            { id: 8, name: "Aditya Fadilah", role: "Imam Besar", isExempt: false, payments: [false, false, false, false, false, false, false, false] },
+            { id: 9, name: "Afrian Rizki Anugrah", role: "Duta Besar SF - Malaysia", isExempt: true, payments: [false, false, false, false, false, false, false, false] },
+            { id: 10, name: "Ibrahim Abdurrahman", role: "Duta Besar SF - Turki", isExempt: true, payments: [false, false, false, false, false, false, false, false] },
+            { id: 11, name: "Naufaldy Nurrobi Aditya", role: "Extended", isExempt: false, payments: [false, false, false, false, false, false, false, false] }
+        ];
+
+        // Data Default Log Transaksi Masuk
+        const DEFAULT_LOGS = [
+            { id: 1, date: "2026-11-02", week: 1, wargaName: "Andre Zacky Geraldy", amount: 10000, method: "QRIS Bank", proofStatus: "Terverifikasi", note: "Iuran M1" },
+            { id: 2, date: "2026-11-02", week: 1, wargaName: "Faqih Ragi", amount: 10000, method: "QRIS E-Wallet", proofStatus: "Terverifikasi", note: "Iuran M1" },
+            { id: 3, date: "2026-11-02", week: 1, wargaName: "Raihan Iman Nugroho", amount: 10000, method: "QRIS Bank", proofStatus: "Terverifikasi", note: "Iuran M1" },
+            { id: 4, date: "2026-11-02", week: 1, wargaName: "Nashrullah Akbar Thofiqurrohman", amount: 10000, method: "QRIS Bank", proofStatus: "Terverifikasi", note: "Iuran M1" },
+            { id: 5, date: "2026-11-02", week: 1, wargaName: "Farchan Fajhari Putra", amount: 10000, method: "QRIS E-Wallet", proofStatus: "Terverifikasi", note: "Iuran M1" },
+            { id: 6, date: "2026-11-02", week: 2, wargaName: "Nashrullah Akbar Thofiqurrohman", amount: 10000, method: "QRIS Bank", proofStatus: "Terverifikasi", note: "Iuran M2" },
+            { id: 7, date: "2026-11-02", week: 1, wargaName: "M. Mulki Mahendra Kusumah", amount: 10000, method: "QRIS Bank", proofStatus: "Terverifikasi", note: "Iuran M1" }
+        ];
+
+        // State Aplikasi
+        let wargaData = [];
+        let logsData = [];
+        let isAdmin = false;
+        let currentZoom = 1;
+
+        // State Log Transaksi
+        let selectedWeekFilter = 'all'; // 'all', 1, 2, 3, 4, 5, 6, 7, 8
+        let logCurrentPage = 1;
+        const LOGS_PER_PAGE = 11; // Maksimal 11 tabel/baris per halaman
+
+        // Inisialisasi Aplikasi saat Load
+        window.addEventListener('DOMContentLoaded', () => {
+            loadStorageData();
+            checkAdminSession();
+            populateWargaSelectOptions();
+            renderApp();
+            lucide.createIcons();
+
+            document.getElementById('txDate').valueAsDate = new Date();
+        });
+
+        // Load / Save LocalStorage
+        function loadStorageData() {
+            const storedWarga = localStorage.getItem('kas_warga_data');
+            const storedLogs = localStorage.getItem('kas_logs_data');
+
+            wargaData = storedWarga ? JSON.parse(storedWarga) : JSON.parse(JSON.stringify(DEFAULT_WARGA));
+            logsData = storedLogs ? JSON.parse(storedLogs) : JSON.parse(JSON.stringify(DEFAULT_LOGS));
+        }
+
+        function saveData() {
+            localStorage.setItem('kas_warga_data', JSON.stringify(wargaData));
+            localStorage.setItem('kas_logs_data', JSON.stringify(logsData));
+            renderApp();
+        }
+
+        function resetDataToDefault() {
+            if (confirm("Apakah Anda yakin ingin mengembalikan semua data kas ke kondisi awal?")) {
+                localStorage.removeItem('kas_warga_data');
+                localStorage.removeItem('kas_logs_data');
+                wargaData = JSON.parse(JSON.stringify(DEFAULT_WARGA));
+                logsData = JSON.parse(JSON.stringify(DEFAULT_LOGS));
+                selectedWeekFilter = 'all';
+                logCurrentPage = 1;
+                renderApp();
+            }
+        }
+
+        // Auth Logic
+        function checkAdminSession() {
+            isAdmin = sessionStorage.getItem('kas_admin_logged_in') === 'true';
+            updateAuthUI();
+        }
+
+        function openLoginModal() {
+            document.getElementById('modalLogin').classList.remove('hidden');
+        }
+
+        function closeLoginModal() {
+            document.getElementById('modalLogin').classList.add('hidden');
+            document.getElementById('adminPassword').value = '';
+        }
+
+        function handleLoginSubmit(e) {
+            e.preventDefault();
+            const pass = document.getElementById('adminPassword').value;
+            if (pass === 'adminkas666') {
+                sessionStorage.setItem('kas_admin_logged_in', 'true');
+                isAdmin = true;
+                updateAuthUI();
+                closeLoginModal();
+                renderApp();
+            } else {
+                alert("Password Admin Salah!");
+            }
+        }
+
+        function logoutAdmin() {
+            sessionStorage.removeItem('kas_admin_logged_in');
+            isAdmin = false;
+            updateAuthUI();
+            renderApp();
+        }
+
+        function updateAuthUI() {
+            const btnLogin = document.getElementById('btnLogin');
+            const adminBadge = document.getElementById('adminBadge');
+            const adminPanel = document.getElementById('adminPanel');
+            const matrixSubtitle = document.getElementById('matrixSubtitle');
+            const thActionLog = document.getElementById('thActionLog');
+
+            if (isAdmin) {
+                btnLogin.classList.add('hidden');
+                adminBadge.classList.remove('hidden');
+                adminBadge.classList.add('flex');
+                adminPanel.classList.remove('hidden');
+                matrixSubtitle.textContent = "Mode Admin Active: Anda dapat mengubah status centang M1-M8 dan menambahkan log transaksi.";
+                thActionLog.classList.remove('hidden');
+            } else {
+                btnLogin.classList.remove('hidden');
+                adminBadge.classList.add('hidden');
+                adminBadge.classList.remove('flex');
+                adminPanel.classList.add('hidden');
+                matrixSubtitle.textContent = "Mode Viewer: Tampilan Publik. Status pembayaran diperjelas dengan penanda hijau secara real-time.";
+                thActionLog.classList.add('hidden');
+            }
+        }
+
+        // Form Select Options (Warga & Minggu Dinamis)
+        function populateWargaSelectOptions() {
+            const select = document.getElementById('txWargaId');
+            select.innerHTML = wargaData
+                .filter(w => !w.isExempt)
+                .map(w => `<option value="${w.id}">${w.name} (${w.role})</option>`)
+                .join('');
+
+            updateWeekDropdownOptions();
+        }
+
+        // Update Dropdown Minggu Ke- Berdasarkan Status Lunas Warga Terpilih
+        function updateWeekDropdownOptions() {
+            const wargaId = parseInt(document.getElementById('txWargaId').value);
+            const weekSelect = document.getElementById('txWeek');
+            const btnSubmit = document.getElementById('btnSubmitTx');
+
+            const warga = wargaData.find(w => w.id === wargaId);
+            if (!warga) return;
+
+            let html = '';
+            let firstAvailableWeek = null;
+
+            for (let i = 0; i < 8; i++) {
+                const weekNum = i + 1;
+                const isPaid = warga.payments[i];
+
+                if (isPaid) {
+                    html += `<option value="${weekNum}" disabled class="text-slate-500 bg-slate-950">Minggu ${weekNum} (M${weekNum}) - (Sudah Lunas)</option>`;
+                } else {
+                    if (!firstAvailableWeek) firstAvailableWeek = weekNum;
+                    html += `<option value="${weekNum}" class="text-white bg-slate-900">Minggu ${weekNum} (M${weekNum})</option>`;
+                }
+            }
+
+            weekSelect.innerHTML = html;
+
+            if (firstAvailableWeek) {
+                weekSelect.value = firstAvailableWeek;
+                weekSelect.disabled = false;
+                btnSubmit.disabled = false;
+                btnSubmit.classList.remove('opacity-50', 'cursor-not-allowed');
+            } else {
+                weekSelect.disabled = true;
+                btnSubmit.disabled = true;
+                btnSubmit.classList.add('opacity-50', 'cursor-not-allowed');
+            }
+        }
+
+        // Handle Add New Transaction
+        function handleTransactionSubmit(e) {
+            e.preventDefault();
+            const wargaId = parseInt(document.getElementById('txWargaId').value);
+            const week = parseInt(document.getElementById('txWeek').value);
+            const amount = parseInt(document.getElementById('txAmount').value);
+            const method = document.getElementById('txMethod').value;
+            const date = document.getElementById('txDate').value;
+            const note = document.getElementById('txNote').value || `Iuran M${week} Lunas`;
+
+            const warga = wargaData.find(w => w.id === wargaId);
+            if (!warga) return;
+
+            // Centang minggu di matriks
+            warga.payments[week - 1] = true;
+
+            const newLog = {
+                id: Date.now(),
+                date: date,
+                week: week,
+                wargaName: warga.name,
+                amount: amount,
+                method: method,
+                proofStatus: "Terverifikasi",
+                note: note
+            };
+
+            logsData.unshift(newLog);
+            saveData();
+            document.getElementById('txNote').value = '';
+            updateWeekDropdownOptions(); // Refresh dropdown minggu
+            alert(`Transaksi sebesar Rp${amount.toLocaleString('id-ID')} untuk ${warga.name} (M${week}) berhasil disimpan!`);
+        }
+
+        // Toggle Checkbox Status (Admin Only)
+        function togglePayment(wargaId, weekIndex) {
+            if (!isAdmin) return;
+            const warga = wargaData.find(w => w.id === wargaId);
+            if (warga && !warga.isExempt) {
+                warga.payments[weekIndex] = !warga.payments[weekIndex];
+                saveData();
+                updateWeekDropdownOptions();
+            }
+        }
+
+        // Delete Log (Admin Only)
+        function deleteLog(logId) {
+            if (!isAdmin) return;
+            if (confirm("Hapus catatan transaksi ini?")) {
+                logsData = logsData.filter(l => l.id !== logId);
+                saveData();
+            }
+        }
+
+        // Render Functions
+        function renderApp() {
+            renderSummaryCards();
+            renderMatrixTable();
+            renderLogsTable();
+            lucide.createIcons();
+        }
+
+        function renderSummaryCards() {
+            const mandatoryWarga = wargaData.filter(w => !w.isExempt);
+            const totalMandatoryCount = mandatoryWarga.length;
+            const totalTargetAmount = totalMandatoryCount * 8 * 10000;
+
+            let totalCollected = 0;
+            mandatoryWarga.forEach(w => {
+                const paidWeeksCount = w.payments.filter(p => p).length;
+                totalCollected += paidWeeksCount * 10000;
+            });
+
+            const remainingAmount = Math.max(0, totalTargetAmount - totalCollected);
+            const percent = totalTargetAmount > 0 ? ((totalCollected / totalTargetAmount) * 100).toFixed(1) : 0;
+
+            document.getElementById('statTotalCollected').textContent = `Rp${totalCollected.toLocaleString('id-ID')}`;
+            document.getElementById('statTargetAmount').textContent = `Rp${totalTargetAmount.toLocaleString('id-ID')}`;
+            document.getElementById('statTargetDetail').textContent = `${totalMandatoryCount} Warga Wajib × 8 Minggu`;
+            document.getElementById('statRemaining').textContent = `Rp${remainingAmount.toLocaleString('id-ID')}`;
+            document.getElementById('statWargaCount').innerHTML = `${totalMandatoryCount} <span class="text-sm font-normal text-slate-400">Warga</span>`;
+            document.getElementById('statPercentText').textContent = `${percent}%`;
+            document.getElementById('statProgressBar').style.width = `${Math.min(100, percent)}%`;
+        }
+
+        function renderMatrixTable() {
+            const search = (document.getElementById('searchMatrix').value || '').toLowerCase();
+            const tbody = document.getElementById('matrixTableBody');
+            tbody.innerHTML = '';
+
+            let weekTotals = [0, 0, 0, 0, 0, 0, 0, 0];
+            let grandTotalAll = 0;
+            let totalLunasCount = 0;
+
+            const filtered = wargaData.filter(w =>
+                w.name.toLowerCase().includes(search) ||
+                w.role.toLowerCase().includes(search)
+            );
+
+            filtered.forEach((warga, index) => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-800/40 transition-colors";
+
+                let totalCollectedWarga = 0;
+                let isFullyPaid = true;
+
+                let weeksTdHtml = '';
+                for (let i = 0; i < 8; i++) {
+                    const isChecked = warga.payments[i];
+                    if (isChecked && !warga.isExempt) {
+                        totalCollectedWarga += 10000;
+                        weekTotals[i] += 10000;
+                    } else if (!warga.isExempt) {
+                        isFullyPaid = false;
+                    }
+
+                    if (warga.isExempt) {
+                        weeksTdHtml += `<td class="py-3 px-2 text-center text-slate-600">-</td>`;
+                    } else {
+                        const checkIcon = isChecked
+                            ? `<button onclick="togglePayment(${warga.id}, ${i})" ${!isAdmin ? 'disabled cursor-default' : ''} class="w-6 h-6 rounded bg-emerald-500/20 border border-emerald-500/50 text-emerald-400 inline-flex items-center justify-center font-bold text-xs"><i data-lucide="check" class="w-3.5 h-3.5 stroke-[3]"></i></button>`
+                            : `<button onclick="togglePayment(${warga.id}, ${i})" ${!isAdmin ? 'disabled cursor-default' : ''} class="w-6 h-6 rounded bg-slate-900 border border-slate-700 hover:border-slate-500 inline-flex items-center justify-center"></button>`;
+                        weeksTdHtml += `<td class="py-3 px-2 text-center">${checkIcon}</td>`;
+                    }
+                }
+
+                grandTotalAll += totalCollectedWarga;
+                if (isFullyPaid && !warga.isExempt) totalLunasCount++;
+
+                let statusBadge = '';
+                if (warga.isExempt) {
+                    statusBadge = `<span class="px-2.5 py-1 rounded-full text-[11px] font-semibold bg-sky-500/10 border border-sky-500/30 text-sky-400">Bebas Iuran</span>`;
+                } else if (isFullyPaid) {
+                    statusBadge = `<span class="px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-500/10 border border-emerald-500/30 text-emerald-400">Lunas</span>`;
+                } else {
+                    statusBadge = `<span class="px-2.5 py-1 rounded-full text-[11px] font-semibold bg-amber-500/10 border border-amber-500/30 text-amber-400">Belum Lunas</span>`;
+                }
+
+                tr.innerHTML = `
+                    <td class="py-3 px-3 text-center text-slate-400 font-mono text-xs">${index + 1}</td>
+                    <td class="py-3 px-4 font-bold text-white">${warga.name}</td>
+                    <td class="py-3 px-4 text-xs text-slate-400">${warga.role}</td>
+                    ${weeksTdHtml}
+                    <td class="py-3 px-4 text-right font-bold text-emerald-400">Rp${totalCollectedWarga.toLocaleString('id-ID')}</td>
+                    <td class="py-3 px-4 text-center">${statusBadge}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            for (let i = 0; i < 8; i++) {
+                document.getElementById(`totM${i + 1}`).textContent = `Rp${weekTotals[i].toLocaleString('id-ID')}`;
+            }
+            document.getElementById('totAll').textContent = `Rp${grandTotalAll.toLocaleString('id-ID')}`;
+            document.getElementById('lunasCount').textContent = `${totalLunasCount} Lunas`;
+        }
+
+        // Render Log Transaksi per Minggu & Paginasi (Maks 11 per Tabel)
+        function setWeekFilter(filter) {
+            selectedWeekFilter = filter;
+            logCurrentPage = 1; // Reset ke halaman 1 saat filter diubah
+            renderLogsTable();
+        }
+
+        function setLogPage(page) {
+            logCurrentPage = page;
+            renderLogsTable();
+        }
+
+        function renderLogsTable() {
+            // Render Filter Buttons (All, M1..M8)
+            const btnContainer = document.getElementById('weekFilterButtons');
+            let btnHtml = `<button onclick="setWeekFilter('all')" class="px-2.5 py-1 rounded-lg text-xs font-semibold transition ${selectedWeekFilter === 'all' ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/20' : 'text-slate-400 hover:text-white hover:bg-slate-800'}">Semua</button>`;
+
+            for (let i = 1; i <= 8; i++) {
+                const isActive = selectedWeekFilter === i;
+                btnHtml += `<button onclick="setWeekFilter(${i})" class="px-2.5 py-1 rounded-lg text-xs font-semibold transition ${isActive ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/20' : 'text-slate-400 hover:text-white hover:bg-slate-800'}">M${i}</button>`;
+            }
+            btnContainer.innerHTML = btnHtml;
+
+            // Filter data logs
+            const filteredLogs = selectedWeekFilter === 'all'
+                ? logsData
+                : logsData.filter(l => l.week === parseInt(selectedWeekFilter));
+
+            const totalFiltered = filteredLogs.length;
+            const totalPages = Math.ceil(totalFiltered / LOGS_PER_PAGE) || 1;
+
+            if (logCurrentPage > totalPages) logCurrentPage = totalPages;
+
+            const startIndex = (logCurrentPage - 1) * LOGS_PER_PAGE;
+            const paginatedLogs = filteredLogs.slice(startIndex, startIndex + LOGS_PER_PAGE);
+
+            const tbody = document.getElementById('logsTableBody');
+            tbody.innerHTML = '';
+
+            if (paginatedLogs.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="9" class="py-6 text-center text-slate-500 italic">Belum ada transaksi tercatat ${selectedWeekFilter !== 'all' ? 'untuk Minggu ' + selectedWeekFilter : ''}.</td></tr>`;
+            } else {
+                paginatedLogs.forEach((log, idx) => {
+                    const rowNumber = startIndex + idx + 1;
+                    const tr = document.createElement('tr');
+                    tr.className = "hover:bg-slate-800/40 transition-colors";
+
+                    const actionTd = isAdmin ? `
+                        <td class="py-3 px-3 text-center">
+                            <button onclick="deleteLog(${log.id})" class="text-red-400 hover:text-red-300 p-1 rounded">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            </button>
+                        </td>
+                    ` : `<td class="hidden"></td>`;
+
+                    tr.innerHTML = `
+                        <td class="py-3 px-3 text-center text-slate-400 font-mono text-xs">${rowNumber}</td>
+                        <td class="py-3 px-4 text-xs text-slate-300">${log.date}</td>
+                        <td class="py-3 px-4 text-xs font-semibold text-slate-300">Minggu ${log.week}</td>
+                        <td class="py-3 px-4 font-bold text-white">${log.wargaName}</td>
+                        <td class="py-3 px-4 text-right font-bold text-emerald-400">Rp${log.amount.toLocaleString('id-ID')}</td>
+                        <td class="py-3 px-4 text-center">
+                            <span class="px-2 py-0.5 rounded bg-slate-800 border border-slate-700 text-[11px] text-slate-300">${log.method}</span>
+                        </td>
+                        <td class="py-3 px-4 text-center">
+                            <span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[11px] font-semibold">${log.proofStatus}</span>
+                        </td>
+                        <td class="py-3 px-4 text-xs text-slate-400">${log.note}</td>
+                        ${actionTd}
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+
+            // Update Info Paginasi & Tombol
+            const pageInfo = document.getElementById('logPageInfo');
+            const endItem = Math.min(startIndex + LOGS_PER_PAGE, totalFiltered);
+            pageInfo.textContent = totalFiltered > 0
+                ? `Menampilkan ${startIndex + 1}-${endItem} dari ${totalFiltered} transaksi (${LOGS_PER_PAGE} per halaman)`
+                : `Menampilkan 0 transaksi`;
+
+            const paginationBtns = document.getElementById('logPaginationBtns');
+            let pBtnsHtml = '';
+
+            pBtnsHtml += `<button onclick="setLogPage(${logCurrentPage - 1})" ${logCurrentPage === 1 ? 'disabled class="opacity-40 cursor-not-allowed px-2.5 py-1 bg-slate-900 border border-slate-800 rounded-lg"' : 'class="px-2.5 py-1 bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-lg text-white transition"'}>&laquo; Prev</button>`;
+
+            for (let i = 1; i <= totalPages; i++) {
+                pBtnsHtml += `<button onclick="setLogPage(${i})" class="px-3 py-1 rounded-lg border text-xs font-semibold transition ${i === logCurrentPage ? 'bg-emerald-500 text-slate-950 border-emerald-500' : 'bg-slate-900 hover:bg-slate-800 border-slate-800 text-slate-300'}">${i}</button>`;
+            }
+
+            pBtnsHtml += `<button onclick="setLogPage(${logCurrentPage + 1})" ${logCurrentPage === totalPages ? 'disabled class="opacity-40 cursor-not-allowed px-2.5 py-1 bg-slate-900 border border-slate-800 rounded-lg"' : 'class="px-2.5 py-1 bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-lg text-white transition"'}>Next &raquo;</button>`;
+
+            paginationBtns.innerHTML = pBtnsHtml;
+            lucide.createIcons();
+        }
+
+        // Modal QRIS Zoom Functions
+        function openQrisModal() {
+            document.getElementById('modalQris').classList.remove('hidden');
+            resetZoom();
+        }
+
+        function closeQrisModal() {
+            document.getElementById('modalQris').classList.add('hidden');
+        }
+
+        function changeZoom(delta) {
+            currentZoom = Math.min(Math.max(0.8, currentZoom + delta), 2.5);
+            document.getElementById('zoomTarget').style.transform = `scale(${currentZoom})`;
+        }
+
+        function resetZoom() {
+            currentZoom = 1;
+            document.getElementById('zoomTarget').style.transform = `scale(1)`;
+        }
+    </script>
+</body>
+
+</html>
