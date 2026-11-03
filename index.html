@@ -660,6 +660,7 @@
         let logsData = [];
         let isAdmin = false;
         let currentZoom = 1;
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzZenD4gOey76KkI0tA5WrgUjOgcUErQxEw91b9ChIdj3kHGENGrG_nQlZk-NuK0Ka67w/exec";
 
         // State Log Transaksi
         let selectedWeekFilter = 'all'; // 'all', 1, 2, 3, 4, 5, 6, 7, 8
@@ -678,12 +679,30 @@
         });
 
         // Load / Save LocalStorage
-        function loadStorageData() {
-            const storedWarga = localStorage.getItem('kas_warga_data');
-            const storedLogs = localStorage.getItem('kas_logs_data');
+        // Mengambil data real-time langsung dari Google Sheets
+        async function loadStorageData() {
+            if (!SCRIPT_URL || SCRIPT_URL.includes("GANTI_DENGAN_URL")) {
+                console.warn("SCRIPT_URL belum diisi!");
+                return;
+            }
 
-            wargaData = storedWarga ? JSON.parse(storedWarga) : JSON.parse(JSON.stringify(DEFAULT_WARGA));
-            logsData = storedLogs ? JSON.parse(storedLogs) : JSON.parse(JSON.stringify(DEFAULT_LOGS));
+            try {
+                const response = await fetch(SCRIPT_URL);
+                const data = await response.json();
+
+                if (data.warga && data.warga.length > 0) {
+                    wargaData = data.warga;
+                }
+                if (data.logs) {
+                    logsData = data.logs;
+                }
+
+                // Render ulang tampilan web setelah data dari Google Sheets berhasil diambil
+                populateWargaSelectOptions();
+                renderApp();
+            } catch (err) {
+                console.error("Gagal mengambil data dari Google Sheets:", err);
+            }
         }
 
         function saveData() {
@@ -814,7 +833,7 @@
         }
 
         // Handle Add New Transaction
-        function handleTransactionSubmit(e) {
+        async function handleTransactionSubmit(e) {
             e.preventDefault();
             const wargaId = parseInt(document.getElementById('txWargaId').value);
             const week = parseInt(document.getElementById('txWeek').value);
@@ -826,35 +845,59 @@
             const warga = wargaData.find(w => w.id === wargaId);
             if (!warga) return;
 
-            // Centang minggu di matriks
-            warga.payments[week - 1] = true;
+            // Kirim data ke Google Sheets via Apps Script
+            try {
+                await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'addTransaction',
+                        wargaId: wargaId,
+                        wargaName: warga.name,
+                        week: week,
+                        amount: amount,
+                        method: method,
+                        date: date,
+                        note: note
+                    })
+                });
 
-            const newLog = {
-                id: Date.now(),
-                date: date,
-                week: week,
-                wargaName: warga.name,
-                amount: amount,
-                method: method,
-                proofStatus: "Terverifikasi",
-                note: note
-            };
+                alert(`Transaksi untuk ${warga.name} (M${week}) berhasil dikirim ke Google Sheets!`);
+                document.getElementById('txNote').value = '';
 
-            logsData.unshift(newLog);
-            saveData();
-            document.getElementById('txNote').value = '';
-            updateWeekDropdownOptions(); // Refresh dropdown minggu
-            alert(`Transaksi sebesar Rp${amount.toLocaleString('id-ID')} untuk ${warga.name} (M${week}) berhasil disimpan!`);
+                // Reload data dari Google Sheets
+                setTimeout(loadStorageData, 1000);
+            } catch (err) {
+                console.error("Gagal mengirim transaksi:", err);
+            }
         }
 
         // Toggle Checkbox Status (Admin Only)
-        function togglePayment(wargaId, weekIndex) {
+        async function togglePayment(wargaId, weekIndex) {
             if (!isAdmin) return;
             const warga = wargaData.find(w => w.id === wargaId);
             if (warga && !warga.isExempt) {
-                warga.payments[weekIndex] = !warga.payments[weekIndex];
-                saveData();
-                updateWeekDropdownOptions();
+                const newStatus = !warga.payments[weekIndex];
+                warga.payments[weekIndex] = newStatus;
+                renderApp(); // Update tampilan lokal dulu secara instan
+
+                // Kirim status baru ke Google Sheets
+                try {
+                    await fetch(SCRIPT_URL, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            action: 'togglePayment',
+                            wargaId: wargaId,
+                            weekIndex: weekIndex,
+                            status: newStatus
+                        })
+                    });
+                } catch (err) {
+                    console.error("Gagal update status di Google Sheets:", err);
+                }
             }
         }
 
